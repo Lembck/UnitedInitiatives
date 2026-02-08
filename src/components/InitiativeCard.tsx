@@ -37,7 +37,7 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({
                     <Link
                         href={organizationURL}
                         target="_blank"
-                        className="min-h-[27px]"
+                        className="min-h-[27px] min-w-[27px] max-w-[27px] max-h-[27px]"
                     >
                         <Image
                             className="dark:invert"

@@ -26,6 +26,14 @@ export default function Home() {
                     organizationURL="https://indivisible.org/"
                 />
                 <InitiativeCard
+                    title="Permanently Protect Our National Forests from Industrial Development"
+                    description="Sign the petition demanding accountability for the ICE abuses she's excusing and encouraging."
+                    initiativeImage="/images/SierraClub-ProtectForests.jpeg"
+                    initiativeURL="https://act.sierraclub.org/actions/National?actionId=AR0569577"
+                    organizationImage="/images/SierraClub.svg"
+                    organizationURL="https://www.sierraclub.org/"
+                />
+                <InitiativeCard
                     title="Demand the Removal of Kristi Noem"
                     description="Sign the petition demanding accountability for the ICE abuses she's excusing and encouraging."
                     initiativeImage="/images/CommonCause-FireNoem.png"
