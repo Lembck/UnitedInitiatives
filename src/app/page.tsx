@@ -18,6 +18,14 @@ export default function Home() {
                     organizationURL="https://freespeechforpeople.org/"
                 />
                 <InitiativeCard
+                    title="Not a penny more for ICE brutality"
+                    description="Call your senators to refuse to vote for any appropriations bill funding the DHS that fails to rein in ICE."
+                    initiativeImage="/images/Indivisible-ICEOUT.png"
+                    initiativeURL="https://act.indivisible.org/sign/stop-gops-new-voter-suppression-legislation/"
+                    organizationImage="/images/Indivisible.png"
+                    organizationURL="https://indivisible.org/"
+                />
+                <InitiativeCard
                     title="Stop the GOP’s new voter suppression legislation"
                     description="Email your member of congress to vote against legislation that will make it harder for millions of Americans to vote."
                     initiativeImage="/images/Indivisible-VoterSuppression.png"
