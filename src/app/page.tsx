@@ -4,7 +4,7 @@ export default function Home() {
     return (
         <div className="flex flex-col min-h-screen items-center justify-center font-sans dark:bg-black">
             <header>
-                <div className="font-bold text-2xl py-6 bg-gradient-to-br from-red-600 via-white to-blue-600 bg-clip-text text-transparent">
+                <div className="font-bold text-3xl py-6 bg-linear-to-br from-red-600 via-white to-blue-600 bg-clip-text text-transparent">
                     United Initiatives
                 </div>
             </header>
@@ -13,7 +13,7 @@ export default function Home() {
                     title="Sign the petition to Impeach Trump. Again."
                     description="Demand that Congress immediately impeach and remove Trump for his unlawful conduct. (List of impeachable offenses included)."
                     initiativeImage="/images/ImpeachTrumpAgain.png"
-                    initiativeURL="https://www.impeachtrumpagain.org/#action"
+                    initiativeURL="a"
                     organizationImage="/images/FreeSpeech4People.svg"
                     organizationURL="https://freespeechforpeople.org/"
                 />
@@ -35,7 +35,7 @@ export default function Home() {
                 />
                 <InitiativeCard
                     title="Permanently Protect Our National Forests from Industrial Development"
-                    description="Sign the petition demanding accountability for the ICE abuses she's excusing and encouraging."
+                    description="Help us protect over 45 million acres of public lands—treasured national forests—from yet another Trump administration attack."
                     initiativeImage="/images/SierraClub-ProtectForests.jpeg"
                     initiativeURL="https://act.sierraclub.org/actions/National?actionId=AR0569577"
                     organizationImage="/images/SierraClub.svg"

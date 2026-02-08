@@ -9,6 +9,9 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { Button } from "./ui/button";
+import OverlayCard from "./OverlayCard";
 
 export interface InitiativeCardProps {
     title: string;
@@ -27,17 +30,27 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({
     organizationImage,
     organizationURL,
 }) => {
+    const [showOverlay, setShowOverlay] = useState<boolean>(false);
+
+    const ShowOverlay = () => {
+        setShowOverlay(true);
+    };
+
     return (
-        <Card className="w-full pb-0 overflow-hidden">
+        <OverlayCard showOverlay={showOverlay}>
             <CardHeader>
-                <CardTitle className="flex justify-between items-center">
-                    <Link href={initiativeURL} target="_blank">
+                <CardTitle className="flex justify-between items-start">
+                    <Link
+                        href={initiativeURL}
+                        target="_blank"
+                        onClick={ShowOverlay}
+                    >
                         {title}
                     </Link>
                     <Link
                         href={organizationURL}
                         target="_blank"
-                        className="min-h-[27px] min-w-[27px] max-w-[27px] max-h-[27px]"
+                        className="min-h-6.75 min-w-6.75 max-w-6.75 max-h-6.75"
                     >
                         <Image
                             className="dark:invert"
@@ -52,7 +65,11 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({
                 <CardDescription>{description}</CardDescription>
             </CardHeader>
             <CardContent className="px-0">
-                <Link href={initiativeURL} target="_blank">
+                <Link
+                    href={initiativeURL}
+                    target="_blank"
+                    onClick={ShowOverlay}
+                >
                     <Image
                         className="dark:invert"
                         src={initiativeImage}
@@ -63,7 +80,7 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({
                     />
                 </Link>
             </CardContent>
-        </Card>
+        </OverlayCard>
     );
 };
 
