@@ -4,7 +4,7 @@ export default function Home() {
     return (
         <div className="flex flex-col min-h-screen items-center justify-center font-sans dark:bg-black">
             <header>
-                <div className="font-bold text-2xl py-6 text-[#333]">
+                <div className="font-bold text-2xl py-6 bg-gradient-to-br from-red-600 via-white to-blue-600 bg-clip-text text-transparent">
                     United Initiatives
                 </div>
             </header>
@@ -21,7 +21,7 @@ export default function Home() {
                     title="Not a penny more for ICE brutality"
                     description="Call your senators to refuse to vote for any appropriations bill funding the DHS that fails to rein in ICE."
                     initiativeImage="/images/Indivisible-ICEOUT.png"
-                    initiativeURL="https://act.indivisible.org/sign/stop-gops-new-voter-suppression-legislation/"
+                    initiativeURL="https://indivisible.org/actions/ice-out-senate/"
                     organizationImage="/images/Indivisible.png"
                     organizationURL="https://indivisible.org/"
                 />
