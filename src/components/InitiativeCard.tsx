@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import OverlayCard from "./OverlayCard";
+import { InitiativeProgress } from "./types/initiativeProgress";
 
 export interface InitiativeCardProps {
     title: string;
@@ -20,6 +21,7 @@ export interface InitiativeCardProps {
     initiativeURL: string;
     organizationImage: string;
     organizationURL: string;
+    logInitiativeProgress: (progress: InitiativeProgress) => void;
 }
 
 const InitiativeCard: React.FC<InitiativeCardProps> = ({
@@ -29,15 +31,20 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({
     initiativeURL,
     organizationImage,
     organizationURL,
+    logInitiativeProgress,
 }) => {
     const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
     const ShowOverlay = () => {
+        logInitiativeProgress("Clicked");
         setShowOverlay(true);
     };
 
     return (
-        <OverlayCard showOverlay={showOverlay}>
+        <OverlayCard
+            showOverlay={showOverlay}
+            logInitiativeProgress={logInitiativeProgress}
+        >
             <CardHeader>
                 <CardTitle className="flex justify-between items-start">
                     <Link
