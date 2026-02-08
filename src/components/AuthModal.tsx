@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-type AuthView = "sign-in" | "sign-up" | "forgot-password" | "verify-reset";
+type AuthView = "sign-in" | "sign-up" | "forgot-password" | "check-email";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -19,27 +19,19 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     } | null>(null);
 
     // Form fields
-    const [usernameOrPhone, setUsernameOrPhone] = useState("");
+    const [usernameOrEmail, setUsernameOrEmail] = useState("");
     const [username, setUsername] = useState("");
-    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [verificationCode, setVerificationCode] = useState("");
-    const [phoneForReset, setPhoneForReset] = useState(""); // Store phone for reset flow
 
     const supabase = createClient();
 
     if (!isOpen) return null;
 
-    // Helper to check if input is phone number (starts with + or all digits)
-    const isPhoneNumber = (input: string) => {
-        return /^[\d+\s()-]+$/.test(input.trim());
-    };
-
-    // Helper to format phone number (add + if missing)
-    const formatPhone = (input: string) => {
-        const cleaned = input.replace(/[\s()-]/g, "");
-        return cleaned.startsWith("+") ? cleaned : `+${cleaned}`;
+    // Helper to check if input is email
+    const isEmail = (input: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.trim());
     };
 
     const handleSignUp = async (e: React.FormEvent) => {
@@ -63,8 +55,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         }
 
         try {
-            const formattedPhone = formatPhone(phone);
-
             // 1. Check if username is already taken
             const { data: existingUser } = await supabase
                 .from("user_profiles")
@@ -78,14 +68,15 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 return;
             }
 
-            // 2. Sign up with phone and password
+            // 2. Sign up with email and password
             const { data, error } = await supabase.auth.signUp({
-                phone: formattedPhone,
+                email: email,
                 password: password,
                 options: {
                     data: {
                         username: username,
                     },
+                    emailRedirectTo: `${window.location.origin}/auth/callback`,
                 },
             });
 
@@ -98,7 +89,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     .insert({
                         id: data.user.id,
                         username: username,
-                        phone: formattedPhone,
+                        email: email,
                     });
 
                 if (profileError) throw profileError;
@@ -106,14 +97,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
             setMessage({
                 type: "success",
-                text: "Account created! Please verify your phone number with the code sent to you.",
+                text: "Account created! Please check your email to verify your account.",
             });
 
-            // Switch to sign in view after a delay
+            // Switch to check-email view
             setTimeout(() => {
-                setView("sign-in");
-                setMessage(null);
-            }, 3000);
+                setView("check-email");
+            }, 2000);
         } catch (error: any) {
             setMessage({
                 type: "error",
@@ -130,14 +120,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setMessage(null);
 
         try {
-            let phoneToUse = usernameOrPhone;
+            let emailToUse = usernameOrEmail;
 
-            // If input is not a phone number, look up the phone from username
-            if (!isPhoneNumber(usernameOrPhone)) {
+            // If input is not an email, look up the email from username
+            if (!isEmail(usernameOrEmail)) {
                 const { data: profile, error: lookupError } = await supabase
                     .from("user_profiles")
-                    .select("phone")
-                    .eq("username", usernameOrPhone)
+                    .select("email")
+                    .eq("username", usernameOrEmail)
                     .single();
 
                 if (lookupError || !profile) {
@@ -146,14 +136,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     return;
                 }
 
-                phoneToUse = profile.phone;
-            } else {
-                phoneToUse = formatPhone(usernameOrPhone);
+                emailToUse = profile.email;
             }
 
-            // Sign in with phone and password
+            // Sign in with email and password
             const { data, error } = await supabase.auth.signInWithPassword({
-                phone: phoneToUse,
+                email: emailToUse,
                 password: password,
             });
 
@@ -182,14 +170,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setMessage(null);
 
         try {
-            let phoneToUse = usernameOrPhone;
+            let emailToUse = usernameOrEmail;
 
-            // If input is not a phone number, look up the phone from username
-            if (!isPhoneNumber(usernameOrPhone)) {
+            // If input is not an email, look up the email from username
+            if (!isEmail(usernameOrEmail)) {
                 const { data: profile, error: lookupError } = await supabase
                     .from("user_profiles")
-                    .select("phone")
-                    .eq("username", usernameOrPhone)
+                    .select("email")
+                    .eq("username", usernameOrEmail)
                     .single();
 
                 if (lookupError || !profile) {
@@ -198,30 +186,27 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     return;
                 }
 
-                phoneToUse = profile.phone;
-            } else {
-                phoneToUse = formatPhone(usernameOrPhone);
+                emailToUse = profile.email;
             }
 
-            // Send OTP for password reset
-            const { error } = await supabase.auth.signInWithOtp({
-                phone: phoneToUse,
-            });
+            // Send password reset email
+            const { error } = await supabase.auth.resetPasswordForEmail(
+                emailToUse,
+                {
+                    redirectTo: `${window.location.origin}/auth/reset-password`,
+                },
+            );
 
             if (error) throw error;
 
-            // Store the phone for the verification step
-            setPhoneForReset(phoneToUse);
-
             setMessage({
                 type: "success",
-                text: "Verification code sent to your phone!",
+                text: "Password reset link sent! Check your email.",
             });
 
-            // Switch to verification view
+            // Switch to check-email view
             setTimeout(() => {
-                setView("verify-reset");
-                setMessage(null);
+                setView("check-email");
             }, 2000);
         } catch (error: any) {
             setMessage({
@@ -233,71 +218,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         }
     };
 
-    const handleVerifyAndResetPassword = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setMessage(null);
-
-        if (password !== confirmPassword) {
-            setMessage({ type: "error", text: "Passwords do not match" });
-            setLoading(false);
-            return;
-        }
-
-        if (password.length < 6) {
-            setMessage({
-                type: "error",
-                text: "Password must be at least 6 characters",
-            });
-            setLoading(false);
-            return;
-        }
-
-        try {
-            // Verify the OTP code and get session
-            const { error: verifyError } = await supabase.auth.verifyOtp({
-                phone: phoneForReset,
-                token: verificationCode,
-                type: "sms",
-            });
-
-            if (verifyError) throw verifyError;
-
-            // Update the password
-            const { error: updateError } = await supabase.auth.updateUser({
-                password: password,
-            });
-
-            if (updateError) throw updateError;
-
-            setMessage({
-                type: "success",
-                text: "Password reset successfully!",
-            });
-
-            // Switch back to sign in
-            setTimeout(() => {
-                setView("sign-in");
-                resetForm();
-            }, 2000);
-        } catch (error: any) {
-            setMessage({
-                type: "error",
-                text: error.message || "Verification failed",
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const resetForm = () => {
-        setUsernameOrPhone("");
+        setUsernameOrEmail("");
         setUsername("");
-        setPhone("");
+        setEmail("");
         setPassword("");
         setConfirmPassword("");
-        setVerificationCode("");
-        setPhoneForReset("");
         setMessage(null);
     };
 
@@ -307,13 +233,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
                 {/* Close button */}
                 <button
                     onClick={() => {
                         onClose();
                         resetForm();
+                        setView("sign-in"); // Reset to sign-in view when closing
                     }}
                     className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
                 >
@@ -335,7 +262,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     {view === "sign-in" && "Sign In"}
                     {view === "sign-up" && "Create Account"}
                     {view === "forgot-password" && "Reset Password"}
-                    {view === "verify-reset" && "Verify & Reset"}
+                    {view === "check-email" && "Check Your Email"}
                 </h2>
 
                 {/* Message */}
@@ -356,16 +283,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <form onSubmit={handleSignIn} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Username or Phone Number
+                                Username or Email
                             </label>
                             <input
                                 type="text"
-                                value={usernameOrPhone}
+                                value={usernameOrEmail}
                                 onChange={(e) =>
-                                    setUsernameOrPhone(e.target.value)
+                                    setUsernameOrEmail(e.target.value)
                                 }
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="username or +1234567890"
+                                placeholder="username or email@example.com"
                                 required
                             />
                         </div>
@@ -432,19 +359,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Phone Number
+                                Email
                             </label>
                             <input
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="+1234567890"
+                                placeholder="email@example.com"
                                 required
                             />
-                            <p className="text-xs text-gray-500 mt-1">
-                                Include country code (e.g., +1 for US)
-                            </p>
                         </div>
 
                         <div>
@@ -502,22 +426,22 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 {view === "forgot-password" && (
                     <form onSubmit={handleForgotPassword} className="space-y-4">
                         <p className="text-sm text-gray-600 mb-4">
-                            Enter your username or phone number and we'll send
-                            you a verification code.
+                            Enter your username or email and we'll send you a
+                            link to reset your password.
                         </p>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Username or Phone Number
+                                Username or Email
                             </label>
                             <input
                                 type="text"
-                                value={usernameOrPhone}
+                                value={usernameOrEmail}
                                 onChange={(e) =>
-                                    setUsernameOrPhone(e.target.value)
+                                    setUsernameOrEmail(e.target.value)
                                 }
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="username or +1234567890"
+                                placeholder="username or email@example.com"
                                 required
                             />
                         </div>
@@ -527,9 +451,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             disabled={loading}
                             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                         >
-                            {loading
-                                ? "Sending code..."
-                                : "Send Verification Code"}
+                            {loading ? "Sending link..." : "Send Reset Link"}
                         </button>
 
                         <p className="text-center text-sm text-gray-600">
@@ -545,83 +467,34 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     </form>
                 )}
 
-                {/* Verify and Reset Password Form */}
-                {view === "verify-reset" && (
-                    <form
-                        onSubmit={handleVerifyAndResetPassword}
-                        className="space-y-4"
-                    >
-                        <p className="text-sm text-gray-600 mb-4">
-                            Enter the verification code sent to your phone and
-                            your new password.
-                        </p>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Verification Code
-                            </label>
-                            <input
-                                type="text"
-                                value={verificationCode}
-                                onChange={(e) =>
-                                    setVerificationCode(e.target.value)
-                                }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="123456"
-                                required
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                New Password
-                            </label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="••••••••"
-                                required
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Confirm New Password
-                            </label>
-                            <input
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) =>
-                                    setConfirmPassword(e.target.value)
-                                }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="••••••••"
-                                required
-                            />
+                {/* Check Email View */}
+                {view === "check-email" && (
+                    <div className="space-y-4">
+                        <div className="text-center">
+                            <svg
+                                className="mx-auto h-12 w-12 text-green-500"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <p className="mt-4 text-gray-600">
+                                We've sent you an email with instructions.
+                                Please check your inbox and spam folder.
+                            </p>
                         </div>
 
                         <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                            onClick={() => switchView("sign-in")}
+                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
                         >
-                            {loading
-                                ? "Resetting password..."
-                                : "Reset Password"}
+                            Back to Sign In
                         </button>
-
-                        <p className="text-center text-sm text-gray-600">
-                            <button
-                                type="button"
-                                onClick={() => switchView("sign-in")}
-                                className="text-blue-600 hover:text-blue-800 font-medium"
-                            >
-                                Back to sign in
-                            </button>
-                        </p>
-                    </form>
+                    </div>
                 )}
             </div>
         </div>
