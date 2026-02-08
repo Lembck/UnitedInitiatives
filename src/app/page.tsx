@@ -1,26 +1,21 @@
 import InitiativeCard from "@/components/InitiativeCard";
-import {
-    Card,
-    CardAction,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import Image from "next/image";
 
 export default function Home() {
     return (
-        <div className="flex min-h-screen items-center justify-center bg-neutral-50 font-sans dark:bg-black">
-            <main className="flex w-full min-h-screen sm:flex-row flex-col items-center justify-between py-32 px-3 gap-3 dark:bg-black sm:items-start">
+        <div className="flex flex-col min-h-screen items-center justify-center font-sans dark:bg-black">
+            <header>
+                <div className="font-bold text-2xl py-6 text-[#333]">
+                    United Initiatives
+                </div>
+            </header>
+            <main className="flex w-full min-h-screen sm:flex-row flex-col items-center justify-between px-3 pb-3 gap-3 dark:bg-black sm:items-start">
                 <InitiativeCard
-                    title="Demand the Removal of Kristi Noem"
-                    description="Sign the petition demanding accountability for the ICE abuses she's excusing and encouraging."
-                    initiativeImage="/images/CommonCause-FireNoem.png"
-                    initiativeURL="https://act.commoncause.org/petitions/fire-kristi-noem/"
-                    organizationImage="/images/CommonCause.png"
-                    organizationURL="https://www.commoncause.org/"
+                    title="Sign the petition to Impeach Trump. Again."
+                    description="Demand that Congress immediately impeach and remove Trump for his unlawful conduct. (List of impeachable offenses included)."
+                    initiativeImage="/images/ImpeachTrumpAgain.png"
+                    initiativeURL="https://www.impeachtrumpagain.org/#action"
+                    organizationImage="/images/FreeSpeech4People.svg"
+                    organizationURL="https://freespeechforpeople.org/"
                 />
                 <InitiativeCard
                     title="Stop the GOP’s new voter suppression legislation"
@@ -29,6 +24,14 @@ export default function Home() {
                     initiativeURL="https://act.indivisible.org/sign/stop-gops-new-voter-suppression-legislation/"
                     organizationImage="/images/Indivisible.png"
                     organizationURL="https://indivisible.org/"
+                />
+                <InitiativeCard
+                    title="Demand the Removal of Kristi Noem"
+                    description="Sign the petition demanding accountability for the ICE abuses she's excusing and encouraging."
+                    initiativeImage="/images/CommonCause-FireNoem.png"
+                    initiativeURL="https://act.commoncause.org/petitions/fire-kristi-noem/"
+                    organizationImage="/images/CommonCause.png"
+                    organizationURL="https://www.commoncause.org/"
                 />
             </main>
         </div>
