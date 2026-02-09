@@ -1,6 +1,5 @@
 import InitiativeCardContainer from "@/components/InitiativeCardContainer";
 import MenuDropdown from "@/components/MenuDropdown";
-import SignOutButton from "@/components/SignInOutButton";
 
 export default function Home() {
     return (
