@@ -11,7 +11,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
-    const [view, setView] = useState<AuthView>("sign-in");
+    const [view, setView] = useState<AuthView>("sign-up");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{
         type: "error" | "success";

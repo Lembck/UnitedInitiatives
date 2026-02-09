@@ -12,8 +12,7 @@ const InitiativeCardContainer = () => {
 
     const logInitiativeProgress = (progress: InitiativeProgress) => {
         console.log(`clicked ${progress}`);
-        if (!isAuthenticated) {
-            // User not logged in - show auth modal
+        if (!isAuthenticated && progress != "Clicked" && progress != "NotYet") {
             setShowAuthModal(true);
             return;
         }
