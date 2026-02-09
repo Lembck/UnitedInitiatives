@@ -6,6 +6,8 @@ import { InitiativeProgress } from "../types/initiativeProgress";
 import InitiativeCard from "./InitiativeCard";
 import AuthModal from "./AuthModal";
 import { Initiative } from "@/types/initiative";
+import { Card, CardContent, CardHeader } from "./ui/card";
+import { Skeleton } from "./ui/skeleton";
 
 const InitiativeCardContainer = () => {
     const { user, isAuthenticated } = useAuth();
@@ -74,7 +76,39 @@ const InitiativeCardContainer = () => {
                     />
                 );
             })}
-            {isAuthenticated && <p>Logged in as: {user?.email}</p>}
+            {initiatives.length == 0 ? (
+                <>
+                    <Card className="w-full h-78">
+                        <CardHeader>
+                            <Skeleton className="h-4 w-2/3" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </CardHeader>
+                        <CardContent>
+                            <Skeleton className="aspect-video w-full" />
+                        </CardContent>
+                    </Card>
+                    <Card className="w-full h-78">
+                        <CardHeader>
+                            <Skeleton className="h-4 w-2/3" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </CardHeader>
+                        <CardContent>
+                            <Skeleton className="aspect-video w-full" />
+                        </CardContent>
+                    </Card>
+                    <Card className="w-full h-78">
+                        <CardHeader>
+                            <Skeleton className="h-4 w-2/3" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </CardHeader>
+                        <CardContent>
+                            <Skeleton className="aspect-video w-full" />
+                        </CardContent>
+                    </Card>
+                </>
+            ) : (
+                <></>
+            )}
             <AuthModal
                 isOpen={showAuthModal}
                 onClose={() => setShowAuthModal(false)}
