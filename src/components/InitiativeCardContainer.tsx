@@ -22,8 +22,9 @@ const InitiativeCardContainer = () => {
             });
 
             const result = (await response.json()).data as Initiative[];
-            console.log(result);
-            setInitatives(result);
+            if (result) {
+                setInitatives(result);
+            }
         };
         fetchInitiatives();
     }, []);
