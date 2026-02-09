@@ -65,13 +65,7 @@ const InitiativeCardContainer = () => {
                 return (
                     <InitiativeCard
                         key={initiative.id}
-                        id={initiative.id}
-                        title={initiative.title}
-                        description={initiative.description}
-                        initiativeImage={initiative.initiative_image}
-                        initiativeURL={initiative.initiative_url}
-                        organizationImage={initiative.organization_image}
-                        organizationURL={initiative.organization_url}
+                        initiative={initiative}
                         logInitiativeProgress={logInitiativeProgress}
                     />
                 );

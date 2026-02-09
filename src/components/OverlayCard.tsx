@@ -6,12 +6,14 @@ import { InitiativeProgress } from "../types/initiativeProgress";
 interface OverlayCardProps {
     children: ReactNode;
     showOverlay: boolean;
+    action: string;
     logInitiativeProgress: (progress: InitiativeProgress) => void;
 }
 
 const OverlayCard: React.FC<OverlayCardProps> = ({
     children,
     showOverlay,
+    action,
     logInitiativeProgress,
 }) => {
     return (
@@ -22,7 +24,7 @@ const OverlayCard: React.FC<OverlayCardProps> = ({
                     <div className="text-white font-bold text-2xl text-center space-y-4">
                         Let us know if you
                         <br />
-                        called your senators.
+                        {action}.
                     </div>
                     <div className="flex flex-col gap-2">
                         <Button

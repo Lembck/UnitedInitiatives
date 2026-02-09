@@ -10,29 +10,17 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "./ui/button";
 import OverlayCard from "./OverlayCard";
 import { InitiativeProgress } from "../types/initiativeProgress";
+import { Initiative } from "@/types/initiative";
 
 export interface InitiativeCardProps {
-    id: string;
-    title: string;
-    description: string;
-    initiativeImage: string;
-    initiativeURL: string;
-    organizationImage: string;
-    organizationURL: string;
+    initiative: Initiative;
     logInitiativeProgress: (progress: InitiativeProgress, id: string) => void;
 }
 
 const InitiativeCard: React.FC<InitiativeCardProps> = ({
-    id,
-    title,
-    description,
-    initiativeImage,
-    initiativeURL,
-    organizationImage,
-    organizationURL,
+    initiative,
     logInitiativeProgress,
 }) => {
     const [showOverlay, setShowOverlay] = useState<boolean>(false);
@@ -43,50 +31,51 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({
     };
 
     const logInitiativeProgressWithId = (progress: InitiativeProgress) => {
-        logInitiativeProgress(progress, id);
+        logInitiativeProgress(progress, initiative.id);
     };
 
     return (
         <OverlayCard
             showOverlay={showOverlay}
+            action={initiative.action}
             logInitiativeProgress={logInitiativeProgressWithId}
         >
             <CardHeader>
                 <CardTitle className="flex justify-between items-start">
                     <Link
-                        href={initiativeURL}
+                        href={initiative.initiative_url}
                         target="_blank"
                         onClick={ShowOverlay}
                     >
-                        {title}
+                        {initiative.title}
                     </Link>
                     <Link
-                        href={organizationURL}
+                        href={initiative.organization_url}
                         target="_blank"
                         className="min-h-6.75 min-w-6.75 max-w-6.75 max-h-6.75"
                     >
                         <Image
                             className="dark:invert"
-                            src={organizationImage}
-                            alt={organizationImage}
+                            src={initiative.organization_image}
+                            alt={initiative.organization_image}
                             width={30}
                             height={100}
                             priority
                         />
                     </Link>
                 </CardTitle>
-                <CardDescription>{description}</CardDescription>
+                <CardDescription>{initiative.description}</CardDescription>
             </CardHeader>
             <CardContent className="px-0">
                 <Link
-                    href={initiativeURL}
+                    href={initiative.initiative_url}
                     target="_blank"
                     onClick={ShowOverlay}
                 >
                     <Image
                         className="dark:invert"
-                        src={initiativeImage}
-                        alt={initiativeImage}
+                        src={initiative.initiative_image}
+                        alt={initiative.initiative_image}
                         width={500}
                         height={100}
                         priority

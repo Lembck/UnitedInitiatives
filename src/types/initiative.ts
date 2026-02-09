@@ -6,4 +6,5 @@ export interface Initiative {
     initiative_url: string;
     organization_image: string;
     organization_url: string;
+    action: string;
 }
