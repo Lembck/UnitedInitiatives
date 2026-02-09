@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { InitiativeProgress } from "./types/initiativeProgress";
+import { InitiativeProgress } from "../types/initiativeProgress";
 
 interface OverlayCardProps {
     children: ReactNode;

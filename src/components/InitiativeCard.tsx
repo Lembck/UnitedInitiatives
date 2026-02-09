@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import OverlayCard from "./OverlayCard";
-import { InitiativeProgress } from "./types/initiativeProgress";
+import { InitiativeProgress } from "../types/initiativeProgress";
 
 export interface InitiativeCardProps {
     title: string;

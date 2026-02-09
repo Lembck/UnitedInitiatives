@@ -2,24 +2,41 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
-import { InitiativeProgress } from "./types/initiativeProgress";
+import { InitiativeProgress } from "../types/initiativeProgress";
 import InitiativeCard from "./InitiativeCard";
 import AuthModal from "./AuthModal";
 
 const InitiativeCardContainer = () => {
-    const { user, isAuthenticated, loading } = useAuth();
+    const { user, isAuthenticated } = useAuth();
     const [showAuthModal, setShowAuthModal] = useState(false);
 
-    const logInitiativeProgress = (progress: InitiativeProgress) => {
+    const logInitiativeProgress = async (progress: InitiativeProgress) => {
         console.log(`clicked ${progress}`);
         if (!isAuthenticated && progress != "Clicked" && progress != "NotYet") {
             setShowAuthModal(true);
             return;
         }
 
-        // User is logged in - proceed with action
         console.log("User is logged in:", user?.email);
-        // Do your protected action here
+
+        const response = await fetch("/api/add/initiative_progress", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                progress: progress,
+                initiative: "2c376ae5-21df-4d82-9c08-1e5d0937e285",
+            }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log("Row added:", result.data);
+        } else {
+            console.error("Error:", result.error);
+        }
     };
     return (
         <>
