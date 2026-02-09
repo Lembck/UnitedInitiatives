@@ -15,16 +15,18 @@ import OverlayCard from "./OverlayCard";
 import { InitiativeProgress } from "../types/initiativeProgress";
 
 export interface InitiativeCardProps {
+    id: string;
     title: string;
     description: string;
     initiativeImage: string;
     initiativeURL: string;
     organizationImage: string;
     organizationURL: string;
-    logInitiativeProgress: (progress: InitiativeProgress) => void;
+    logInitiativeProgress: (progress: InitiativeProgress, id: string) => void;
 }
 
 const InitiativeCard: React.FC<InitiativeCardProps> = ({
+    id,
     title,
     description,
     initiativeImage,
@@ -36,14 +38,18 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({
     const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
     const ShowOverlay = () => {
-        logInitiativeProgress("Clicked");
+        logInitiativeProgressWithId("Clicked");
         setShowOverlay(true);
+    };
+
+    const logInitiativeProgressWithId = (progress: InitiativeProgress) => {
+        logInitiativeProgress(progress, id);
     };
 
     return (
         <OverlayCard
             showOverlay={showOverlay}
-            logInitiativeProgress={logInitiativeProgress}
+            logInitiativeProgress={logInitiativeProgressWithId}
         >
             <CardHeader>
                 <CardTitle className="flex justify-between items-start">
