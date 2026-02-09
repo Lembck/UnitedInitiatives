@@ -7,7 +7,8 @@ export async function GET() {
 
         const { data, error } = await supabase
             .from("initiative_details")
-            .select();
+            .select()
+            .order("created_at", { ascending: false });
 
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 });
