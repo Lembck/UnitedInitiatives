@@ -43,7 +43,7 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({
             <CardHeader>
                 <CardTitle className="flex justify-between items-start">
                     <Link
-                        href={initiative.initiative_url}
+                        href={initiative.url}
                         target="_blank"
                         onClick={ShowOverlay}
                     >
@@ -68,14 +68,14 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({
             </CardHeader>
             <CardContent className="px-0">
                 <Link
-                    href={initiative.initiative_url}
+                    href={initiative.url}
                     target="_blank"
                     onClick={ShowOverlay}
                 >
                     <Image
                         className="dark:invert"
-                        src={initiative.initiative_image}
-                        alt={initiative.initiative_image}
+                        src={initiative.image}
+                        alt={initiative.image}
                         width={500}
                         height={100}
                         priority

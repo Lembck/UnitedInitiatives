@@ -2,8 +2,8 @@ export interface Initiative {
     id: string;
     title: string;
     description: string;
-    initiative_image: string;
-    initiative_url: string;
+    image: string;
+    url: string;
     organization_image: string;
     organization_url: string;
     action: string;
